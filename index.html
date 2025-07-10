@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industries Maintenance Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /* background: url('Industries.jpg') no-repeat center center fixed; */
+            background-size: cover;
+            color: #fff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #007bff;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .result button {
+            margin-top: 10px;
+            background: #dc3545;
+        }
+        .result button:hover {
+            background: #a71d2a;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Industries Maintenance Predictor</h1>
+        <form method="POST" action="/predict">
+            <label for="type">Type (L, M, H)</label>
+            <select id="type" name="type" required>
+                <option value="" disabled {% if not type %}selected{% endif %}>Select Type</option>
+                <option value="L" {% if type == "L" %}selected{% endif %}>L</option>
+                <option value="M" {% if type == "M" %}selected{% endif %}>M</option>
+                <option value="H" {% if type == "H" %}selected{% endif %}>H</option>
+            </select>
+
+            <label for="air_temperature_c">Air Temperature [C] (0 - 100)</label>
+            <input type="number" id="air_temperature_c" name="air_temperature_c" step="0.01" min="0" max="100" required value="{{ air_temperature_c }}">
+
+            <label for="process_temperature_c">Process Temperature [C] (0 - 100)</label>
+            <input type="number" id="process_temperature_c" name="process_temperature_c" step="0.01" min="0" max="100" required value="{{ process_temperature_c }}">
+
+            <label for="rotational_speed_rpm">Rotational Speed [rpm]</label>
+            <input type="text" id="rotational_speed_rpm" name="rotational_speed_rpm" required value="{{ rotational_speed_rpm }}">
+
+            <label for="torque_nm">Torque [Nm]</label>
+            <input type="text" id="torque_nm" name="torque_nm" required value="{{ torque_nm }}">
+
+            <label for="tool_wear_min">Tool Wear [min]</label>
+            <input type="text" id="tool_wear_min" name="tool_wear_min" required value="{{ tool_wear_min }}">
+
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if prediction is not none %}
+        <div class="result">
+            <h2>Prediction: {{ prediction }}</h2>
+            <button onclick="resetForm()">Reset</button>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="result error">
+            <h2>Error: {{ error }}</h2>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function resetForm() {
+            location.href = "/";
+        }
+    </script>
+</body>
+</html>
